@@ -43,3 +43,6 @@ console.log(vocabToExport);
 
 - Go to [JSON to CSV Converter](https://www.convertcsv.com/json-to-csv.htm) and paste the copied object
 - Generate your Busuu vocabulary in CSV format
+
+That is pretty much all, you can do whatever you want with the CSV file (making an Anki deck for eaxample).
+If you have any issues with the script, please create an issue in the repository.
