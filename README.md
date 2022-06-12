@@ -1,7 +1,7 @@
 ## Export / Extract Vocabulary from Busuu Website
 ### Steps:
 - Go to Review page: https://www.busuu.com/dashboard#/review
-- Mute the tab or the PC (when obtaining the audio links, they will be played outloud)
+- Mute the tab or the PC (when obtaining the audio links, they will be played out loud)
 - Open browser console (Ctrl + Shift + J)
 - Run following code in the broswer console:
 ```
