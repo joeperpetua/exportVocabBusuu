@@ -8,7 +8,7 @@
 const vocabList = document.querySelectorAll(".vocab-list-row");
 let vocabToExport = [];
 
-console.log("==========\nThis can take some time, depending on the amount of vocabulary there is to export, around 2 minutes for 700 entries for example.\n==========");
+console.log("==========\nThis can take some time, depending on the amount of vocabulary there is to export, around 1 minute for 800 entries for example.\n==========");
 
 for(let i = 0; i < vocabList.length; i++){
 
