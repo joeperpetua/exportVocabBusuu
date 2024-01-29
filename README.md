@@ -1,55 +1,135 @@
-## Export / Extract Vocabulary from Busuu Website
+## Export / Extract Vocabulary from Busuu Website in JSON
 ### Steps:
 - Go to Review page: https://www.busuu.com/dashboard#/review
-- Mute the tab or the PC (when obtaining the audio links, they will be played out loud)
 - Open browser console (Ctrl + Shift + J)
-- Copy/Paste and Run the following code in the browser console:
-```
-const vocabList = document.querySelectorAll(".vocab-list-row");
-let vocabToExport = [];
+- Copy/Paste and Run one of the following code in the browser console:
 
-console.log("==========\nThis can take some time, depending on the amount of vocabulary there is to export, around 1 minute for 800 entries for example.\n==========");
+``` javascript
+// Function to extract and export vocabulary data (supposed to be more performent)
+function extractVocabularyDataMethodOne() {
+    const vocabularyData = [];
 
-for(let i = 0; i < vocabList.length; i++){
+    // Select all vocabulary list rows
+    const vocabularyRows = document.querySelectorAll('.vocab-list-row');
 
-    vocabList[i]?.childNodes[2]?.firstChild?.firstChild?.lastChild?.firstChild.click();
-    vocabList[i]?.childNodes[6]?.firstChild?.lastChild?.click();
+    // Loop through each vocabulary row
+    vocabularyRows.forEach(row => {
+        const wordData = {};
 
-    const vocabText = vocabList[i]?.children[3]?.children[0]?.children[0]?.textContent;
-    const vocabTranslation = vocabList[i]?.children[3]?.children[1]?.textContent;
-    const vocabStrength = vocabList[i]?.children[4]?.children[1]?.textContent;
-    const vocabExampleTranslated = vocabList[i]?.children[6]?.children[1]?.children[1]?.textContent;
-    const vocabOriginalExample = vocabList[i]?.children[6]?.children[1]?.children[0]?.textContent;
-    const vocabAudioURL = vocabList[i]?.childNodes[2]?.firstChild?.firstChild?.lastChild?.firstChild?.getAttribute("src");
-    const vocabExampleAudioURL = vocabList[i]?.childNodes[6]?.firstChild?.lastChild?.firstChild?.lastChild?.firstChild?.getAttribute("src");
+        // Extract word text and translation
+        const wordText = row.querySelector('.vocab-list-row__course-language .font-face-lt').textContent.trim();
+        const translation = row.querySelector('.vocab-list-row__interface-language').textContent.trim();
 
-    vocabToExport.push({
-        "text": vocabText,
-        "translation": vocabTranslation,
-        "strength": vocabStrength,
-        "example_translated": vocabExampleTranslated,
-        "example": vocabOriginalExample,
-        "audio": vocabAudioURL,
-        "example_audio": vocabExampleAudioURL
+        // Extract strength indicator
+        const strengthIcon = row.querySelector('.vocab-strength-indicator__icon svg');
+        const strength = strengthIcon.getAttribute('fill');
+		
+        // Add extracted data to wordData object
+        wordData.wordText = wordText;
+        wordData.translation = translation;
+        wordData.strength = strength;
+
+        // Check if the row has an example sentence element
+        const hasExampleSentence = row.classList.contains('vocab-list-row--keyphrase');
+
+        if (hasExampleSentence) {
+            // Extract example sentence and translation
+            const exampleSentence = row.querySelector('.vocab-list-row__keyphrase-course .font-face-lt').textContent.trim();
+            const exampleTranslation = row.querySelector('.vocab-list-row__keyphrase-interface').textContent.trim();
+
+            // Add example sentence and translation to wordData object
+            wordData.exampleSentence = exampleSentence;
+            wordData.exampleTranslation = exampleTranslation;
+        } else {
+            // If no example sentence, set to empty string
+            wordData.exampleSentence = '';
+            wordData.exampleTranslation = '';
+        }
+
+        // Push wordData object to vocabularyData array
+        vocabularyData.push(wordData);
     });
-    
-    console.log("<--- Entries processed");
+
+    // Convert vocabularyData to JSON
+    const jsonData = JSON.stringify(vocabularyData);
+
+    // Export JSON data
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'vocabulary_data.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
-console.log("==========\nProcess finished, you can copy the following object:");
-console.log(vocabToExport);
-console.log("==========");
+
+// Call the function to extract and export vocabulary data
+extractVocabularyDataMethodOne();
 ```
-- Wait for the result to be logged in the console
-- This error message is expected, wait until all the errors are logged before unmuting the tab / PC:
+``` javascript
+// Function to extract and export vocabulary data
+function extractVocabularyDataMethodTwo() {
+    const vocabularyData = [];
 
-![image](https://user-images.githubusercontent.com/43834198/173247810-0c9538f3-a20a-4535-8efa-496686c7d042.png)
+    // Select all vocabulary list rows
+    const vocabularyRows = document.querySelectorAll('.vocab-list-row');
 
-- Copy the logged object:
+    // Loop through each vocabulary row
+    vocabularyRows.forEach(row => {
+        const wordData = {};
 
-![image](https://user-images.githubusercontent.com/43834198/173247838-0907f8bc-c41e-4690-9ce7-9b207a742f19.png)
+        // Extract word text and translation
+        const wordText = row.querySelector('.vocab-list-row__course-language .font-face-lt').textContent.trim();
+        const translation = row.querySelector('.vocab-list-row__interface-language').textContent.trim();
 
-- Go to [JSON to CSV Converter](https://www.convertcsv.com/json-to-csv.htm) and paste the copied object
-- Generate your Busuu vocabulary in CSV/xlsx format
+        // Extract strength indicator
+        const strengthIcon = row.querySelector('.vocab-strength-indicator__icon svg');
+        const strength = strengthIcon.getAttribute('fill');
 
-That is pretty much all, you can do whatever you want with the CSV file (making an Anki deck for example).
-If you have any issues with the script, please create an issue in the repository.
+        // Add extracted data to wordData object so far
+        wordData.wordText = wordText;
+        wordData.translation = translation;
+        wordData.strength = strength;
+
+        // Extract example sentence if it exists
+        const exampleSentenceElement = row.querySelector('.vocab-list-row__keyphrase-course .font-face-lt');
+        const exampleTranslationElement = row.querySelector('.vocab-list-row__keyphrase-interface');
+		
+        if (exampleSentenceElement && exampleTranslationElement) {
+            const exampleSentence = exampleSentenceElement.textContent.trim();
+            const exampleTranslation = exampleTranslationElement.textContent.trim();
+
+            // Add example sentence and translation to wordData object
+            wordData.exampleSentence = exampleSentence;
+            wordData.exampleTranslation = exampleTranslation;
+        } else {
+            // If example sentence doesn't exist, set to empty string
+            wordData.exampleSentence = '';
+            wordData.exampleTranslation = '';
+        }
+
+        // Push wordData object to vocabularyData array
+        vocabularyData.push(wordData);
+    });
+
+    // Convert vocabularyData to JSON
+    const jsonData = JSON.stringify(vocabularyData);
+
+    // Export JSON data
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'vocabulary_data.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// Call the function to extract and export vocabulary data
+extractVocabularyDataMethodTwo();
+```
+- Wait for the download
