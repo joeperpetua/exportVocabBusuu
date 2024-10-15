@@ -22,6 +22,7 @@ for(let i = 0; i < vocabList.length; i++){
     const vocabOriginalExample = vocabList[i]?.children[6]?.children[1]?.children[0]?.textContent;
     const vocabAudioURL = vocabList[i]?.childNodes[2]?.firstChild?.firstChild?.lastChild?.firstChild?.getAttribute("src");
     const vocabExampleAudioURL = vocabList[i]?.childNodes[6]?.firstChild?.lastChild?.firstChild?.lastChild?.firstChild?.getAttribute("src");
+    const vocabImageURL = vocabList[i]?.children[1]?.children[0]?.src;
 
     vocabToExport.push({
         "text": vocabText,
@@ -30,7 +31,8 @@ for(let i = 0; i < vocabList.length; i++){
         "example_translated": vocabExampleTranslated,
         "example": vocabOriginalExample,
         "audio": vocabAudioURL,
-        "example_audio": vocabExampleAudioURL
+        "example_audio": vocabExampleAudioURL,
+        "image": vocabImageURL
     });
     
     console.log("<--- Entries processed");
