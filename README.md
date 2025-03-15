@@ -4,7 +4,7 @@
 - Mute the tab or the PC (when obtaining the audio links, they will be played out loud)
 - Open browser console (Ctrl + Shift + J)
 - Copy/Paste and Run the following code in the browser console:
-```
+```js
 const vocabList = document.querySelectorAll(".vocab-list-row");
 let vocabToExport = [];
 
